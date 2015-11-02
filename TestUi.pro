@@ -12,8 +12,9 @@ TARGET = TestUi
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
+SOURCES += \
+    main.cpp\
+    mainwindow.cpp \
     serialport.cpp \
     bsp.cpp \
     settingsdialog.cpp
