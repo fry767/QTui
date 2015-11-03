@@ -17,12 +17,14 @@ SOURCES += \
     mainwindow.cpp \
     serialport.cpp \
     bsp.cpp \
-    settingsdialog.cpp
+    settingsdialog.cpp \
+    console.cpp
 
 HEADERS  += mainwindow.h \
     serialport.h \
     bsp.h \
-    settingsdialog.h
+    settingsdialog.h \
+    console.h
 
 FORMS    += mainwindow.ui \
     settingsdialog.ui

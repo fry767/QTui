@@ -11,9 +11,9 @@ MainWindow::MainWindow(QWidget *parent) :
     settings = new settingsdialog;
     ui->connectPushButton->setEnabled(true);
     ui->disconnectPushButton->setEnabled(false);
-   // status = new QLabel;
-   // ui->statusBar->addWidget(status);
 
+
+    showCurrentSetting();
     initActionsConnections();
 
     connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
@@ -63,7 +63,7 @@ void MainWindow::closeSerialPort()
     if (serial->isOpen())
         serial->close();
    // console->setEnabled(false);
-    ui->connectPushButton->setChecked(true);
+    ui->connectPushButton->setEnabled(true);
     ui->disconnectPushButton->setEnabled(false);
     showStatusMessage(tr("Disconnected"));;
 }
@@ -113,4 +113,12 @@ void MainWindow::showStatusMessage(const QString &message)
            tr("Message"),
            tr(cMessage) );
    // status->setText(message);
+}
+void MainWindow::showCurrentSetting()
+{
+    settingsdialog::Settings currentSettings = settings->settings();
+    ui->CurrentSettingLabel->setText(tr("Current setting are %1 : %2, %3, %4, %5, %6")
+                                     .arg(currentSettings.name).arg(currentSettings.stringBaudRate).arg(currentSettings.stringDataBits)
+                                     .arg(currentSettings.stringParity).arg(currentSettings.stringStopBits).arg(currentSettings.stringFlowControl));
+
 }

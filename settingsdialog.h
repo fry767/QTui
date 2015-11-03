@@ -29,6 +29,7 @@ public:
         QString stringStopBits;
         QSerialPort::FlowControl flowControl;
         QString stringFlowControl;
+        bool localEchoEnabled;
     };
 
     explicit settingsdialog(QWidget *parent = 0);

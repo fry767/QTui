@@ -157,5 +157,5 @@ void settingsdialog::updateSettings()
                 ui->flowControlComboBox->itemData(ui->flowControlComboBox->currentIndex()).toInt());
     currentSettings.stringFlowControl = ui->flowControlComboBox->currentText();
     //local echo pas implémenter
-    //currentSettings.localEchoEnabled = ui->localEchoCheckBox->isChecked();
+    currentSettings.localEchoEnabled = ui->localEchoRadioButton->isChecked();
 }
