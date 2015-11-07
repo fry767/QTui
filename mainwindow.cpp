@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent) :
     serial = new QSerialPort(this);
 //! [0]
     settings = new settingsdialog;
+    rFrame   = new receivedDataFrame;
     ui->connectPushButton->setEnabled(true);
     ui->disconnectPushButton->setEnabled(false);
 
@@ -20,7 +21,7 @@ MainWindow::MainWindow(QWidget *parent) :
             SLOT(handleError(QSerialPort::SerialPortError)));
 
 //! [2]
-    connect(serial, SIGNAL(readyRead()), this, SLOT(readData()));
+    connect(serial, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 //! [2]
     //connect(console, SIGNAL(getData(QByteArray)), this, SLOT(writeData(QByteArray)));
 //! [3]
@@ -51,6 +52,7 @@ void MainWindow::openSerialPort()
         showStatusMessage(tr("Connected to %1 : %2, %3, %4, %5, %6")
                           .arg(p.name).arg(p.stringBaudRate).arg(p.stringDataBits)
                           .arg(p.stringParity).arg(p.stringStopBits).arg(p.stringFlowControl));
+         showCurrentSetting();
     } else {
 
         QMessageBox::critical(this, tr("Error"), serial->errorString());
@@ -78,10 +80,53 @@ void MainWindow::writeData(const QByteArray &data)
 {
     serial->write(data);
 }
+void MainWindow::onReadyRead()
+{
+    if(serial->bytesAvailable())
+    {
+        if(flag==1)
+        {
+            ui->displayTextEdit->clear();
+            flag=0;
+        }
+
+
+        QByteArray data = serial->readAll();
+        QString sRead(QString::fromLatin1(data));
+        ui->displayTextEdit->insertPlainText(sRead);
+        int size = data.size();
+        if (data[size-1]==0x5D)
+        {
+           /*QByteArray bA;
+           int n = 0x6B; //Ack
+
+           for(int i = 0; i != sizeof(n); ++i)
+           {
+               bA.append((char)((n & (0xFF << (i*8))) >> (i*8)));
+           }
+           writeData(bA);*/
+           flag =1;
+
+        }
+    }
+
+
+
+
+
+   // ui->displayTextEdit->setText(tr("%1").arg(test));
+
+
+}
 void MainWindow::readData()
 {
-    QByteArray data = serial->readAll();
-    //console->putData(data);
+   /* int numBytes = serial->bytesAvailable();
+    char buff[256];
+    serial->read(buff,numBytes);
+   // QByteArray data = serial->readAll();
+   // QString sData(data);
+    ui->displayTextEdit->insertPlainText(QString::fromLatin1(buff));
+    //console->putData(data);*/
 }
 void MainWindow::handleError(QSerialPort::SerialPortError error)
 {

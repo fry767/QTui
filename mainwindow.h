@@ -25,6 +25,12 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+    struct receivedDataFrame
+    {
+        qint8  id;
+        qint16 data;
+        qint16 checksum;
+    };
 
 private slots:
     void openSerialPort();
@@ -34,7 +40,8 @@ private slots:
     void readData();
     void showCurrentSetting();
     void handleError(QSerialPort::SerialPortError error);
-
+private Q_SLOTS:
+     void onReadyRead();
 private:
     void initActionsConnections();
 
@@ -43,9 +50,11 @@ private:
 
     Ui::MainWindow *ui;
     QLabel *status;
+    receivedDataFrame *rFrame;
     //Console *console;
     settingsdialog *settings;
     QSerialPort *serial;
+    short flag =0;
 };
 
 #endif // MAINWINDOW_H
