@@ -51,6 +51,7 @@ private:
     Ui::MainWindow *ui;
     QLabel *status;
     receivedDataFrame *rFrame;
+
     //Console *console;
     settingsdialog *settings;
     QSerialPort *serial;

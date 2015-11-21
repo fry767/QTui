@@ -42,6 +42,7 @@ void MainWindow::openSerialPort()
     serial->setParity(p.parity);
     serial->setStopBits(p.stopBits);
     serial->setFlowControl(p.flowControl);
+
     if (serial->open(QIODevice::ReadWrite)) {
         //console->setEnabled(true);
        // console->setLocalEchoEnabled(p.localEchoEnabled);
@@ -82,30 +83,53 @@ void MainWindow::writeData(const QByteArray &data)
 }
 void MainWindow::onReadyRead()
 {
+    static QByteArray data ;
     if(serial->bytesAvailable())
     {
         if(flag==1)
         {
             ui->displayTextEdit->clear();
+            ui->display1TextEdit->clear();
+            data.clear();
             flag=0;
         }
+        data.append(serial->readAll());
 
-
-        QByteArray data = serial->readAll();
-        QString sRead(QString::fromLatin1(data));
-        ui->displayTextEdit->insertPlainText(sRead);
+        int id =0;
         int size = data.size();
-        if (data[size-1]==0x5D)
+        if (data[0] == 0x5B && data[size-1]==0x5D)
         {
-           /*QByteArray bA;
-           int n = 0x6B; //Ack
 
-           for(int i = 0; i != sizeof(n); ++i)
-           {
-               bA.append((char)((n & (0xFF << (i*8))) >> (i*8)));
-           }
-           writeData(bA);*/
-           flag =1;
+            QByteArray dataWithoutHeader;
+            for(int i=1;i<(size-1);i++)
+            {
+                dataWithoutHeader.append(data[i]);
+            }
+            QList<QByteArray> list = dataWithoutHeader.split(0x2C);
+            QString sRead(QString::fromLatin1(dataWithoutHeader));
+            for(int i=0; i<list.size();i++)
+            {
+                id = list[i][0];
+                QByteArray crap;
+                for(int j=1;j<(list[i].size());j++)
+                {
+                    crap.append(list[i][j]);
+                }
+                QString string(QString::fromLatin1(crap));
+                switch(id)
+                {
+                    case 1 :
+                    ui->displayTextEdit->insertPlainText(string);
+                    break;
+                    case 2 :
+                    ui->display1TextEdit->insertPlainText(string);
+                    break;
+                }
+            }
+
+
+
+            flag =1;
 
         }
     }
