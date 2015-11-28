@@ -17,11 +17,13 @@ MainWindow::MainWindow(QWidget *parent) :
     showCurrentSetting();
     initActionsConnections();
 
+
     connect(serial, SIGNAL(error(QSerialPort::SerialPortError)), this,
             SLOT(handleError(QSerialPort::SerialPortError)));
 
 //! [2]
-    connect(serial, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+   connect(serial, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+
 //! [2]
     //connect(console, SIGNAL(getData(QByteArray)), this, SLOT(writeData(QByteArray)));
 //! [3]
@@ -84,15 +86,9 @@ void MainWindow::writeData(const QByteArray &data)
 void MainWindow::onReadyRead()
 {
     static QByteArray data ;
+
     if(serial->bytesAvailable())
     {
-        if(flag==1)
-        {
-            ui->displayTextEdit->clear();
-            ui->display1TextEdit->clear();
-            data.clear();
-            flag=0;
-        }
         data.append(serial->readAll());
 
         int id =0;
@@ -119,27 +115,44 @@ void MainWindow::onReadyRead()
                 switch(id)
                 {
                     case 1 :
+                    ui->displayTextEdit->clear();
                     ui->displayTextEdit->insertPlainText(string);
                     break;
                     case 2 :
+                    ui->display1TextEdit->clear();
                     ui->display1TextEdit->insertPlainText(string);
                     break;
+                    case 3 :
+                    ui->display2TextEdit->clear();
+                    ui->display2TextEdit->insertPlainText(string);
+                    break;
+                    case 4 :
+                    ui->display3TextEdit->clear();
+                    ui->display3TextEdit->insertPlainText(string);
+                    break;
+                    case 5 :
+                    ui->display4TextEdit->clear();
+                    ui->display4TextEdit->insertPlainText(string);
+                    break;
+                    case 6 :
+                    ui->display5TextEdit->clear();
+                    ui->display5TextEdit->insertPlainText(string);
+                    break;
+
+
                 }
             }
 
+            data.clear();
+            QByteArray ack = "K";
+            writeData(ack);
+
+            //serial->clear(QSerialPort::AllDirections);
 
 
-            flag =1;
 
         }
     }
-
-
-
-
-
-   // ui->displayTextEdit->setText(tr("%1").arg(test));
-
 
 }
 void MainWindow::readData()
@@ -189,5 +202,25 @@ void MainWindow::showCurrentSetting()
     ui->CurrentSettingLabel->setText(tr("Current setting are %1 : %2, %3, %4, %5, %6")
                                      .arg(currentSettings.name).arg(currentSettings.stringBaudRate).arg(currentSettings.stringDataBits)
                                      .arg(currentSettings.stringParity).arg(currentSettings.stringStopBits).arg(currentSettings.stringFlowControl));
+
+}
+
+void MainWindow::on_sendPushButton_clicked()
+{
+   QByteArray byteArray((const char*) (ui->sendLineEdit->text().utf16()), ui->sendLineEdit->text().size() * 2);
+   writeData(byteArray);
+}
+
+void MainWindow::on_clearPushButton_clicked()
+{
+    serial->clear(QSerialPort::AllDirections);
+    //serial->clearError();
+    ui->displayTextEdit->clear();
+    ui->display1TextEdit->clear();
+    ui->display2TextEdit->clear();
+    ui->display3TextEdit->clear();
+    ui->display4TextEdit->clear();
+    ui->display5TextEdit->clear();
+
 
 }

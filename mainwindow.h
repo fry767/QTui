@@ -33,15 +33,20 @@ public:
     };
 
 private slots:
+    void about();
     void openSerialPort();
     void closeSerialPort();
-    void about();
+
     void writeData(const QByteArray &data);
     void readData();
     void showCurrentSetting();
     void handleError(QSerialPort::SerialPortError error);
 private Q_SLOTS:
      void onReadyRead();
+     void on_sendPushButton_clicked();
+
+     void on_clearPushButton_clicked();
+
 private:
     void initActionsConnections();
 

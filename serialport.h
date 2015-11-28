@@ -9,7 +9,8 @@ public:
     SerialPort();
     ~SerialPort();
 
-private:
+private Q_SLOTS:
+    void onReadyRead();
 
 };
 
